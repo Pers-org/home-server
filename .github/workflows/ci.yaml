@@ -23,7 +23,7 @@ jobs:
           repo_safe="${github.repository,,}"
           repo_safe="${repo_safe//\//-}"  
           echo "runner_name=runners-${repo_safe}" >> "$GITHUB_OUTPUT"
-          echo "DEBUG2
+          echo "DEBUG2"
 
       - name: preparing server
         env:
