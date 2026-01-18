@@ -31,18 +31,18 @@ jobs:
           SERVER_DOMAIN_NAME: ${{ secrets.SERVER_DOMAIN_NAME }}
           PREPARING_HOST_NAME: ${{ secrets.PREPARING_HOST_NAME }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_KEY_PATH: ${{ secrets.SSH_KEY_PATH }}
         run: |
           set -euo pipefail
           echo "DEBUG3"
           mkdir -p ~/.ssh
-          SSH_KEY_PATH="$HOME/.ssh/deploy_key"
-          printf '%s\n' "$SSH_PRIVATE_KEY" > "$SSH_KEY_PATH"
-          chmod 600 "$SSH_KEY_PATH"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/$SSH_KEY_PATH"
+          chmod 600 "$HOME/$SSH_KEY_PATH"
           echo "DEBUG4"
           ssh-keyscan -p "${SSH_PORT:-22}" -H "$SERVER_DOMAIN_NAME" >> ~/.ssh/known_hosts
 
           ssh -p "${SSH_PORT:-22}" \
-            -i "$SSH_KEY_PATH" \
+            -i "$HOME/$SSH_KEY_PATH" \
             -o IdentitiesOnly=yes \
             "${PREPARING_HOST_NAME}@${SERVER_DOMAIN_NAME}" \
             "/opt/github_k3s_runners/update_repo_url.sh '${{ github.server_url }}' '${{ github.repository }}'"
