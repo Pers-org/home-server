@@ -18,10 +18,12 @@ jobs:
       - name: Compute runner name
         id: compute
         run: |
+          echo "DEBUG1"
           set -euo pipefail
           repo_safe="${github.repository,,}"
           repo_safe="${repo_safe//\//-}"  
           echo "runner_name=runners-${repo_safe}" >> "$GITHUB_OUTPUT"
+          echo "DEBUG2
 
       - name: preparing server
         env:
@@ -31,12 +33,12 @@ jobs:
           SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
           set -euo pipefail
-
+          echo "DEBUG3"
           mkdir -p ~/.ssh
           SSH_KEY_PATH="$HOME/.ssh/deploy_key"
           printf '%s\n' "$SSH_PRIVATE_KEY" > "$SSH_KEY_PATH"
           chmod 600 "$SSH_KEY_PATH"
-
+          echo "DEBUG4"
           ssh-keyscan -p "${SSH_PORT:-22}" -H "$SERVER_DOMAIN_NAME" >> ~/.ssh/known_hosts
 
           ssh -p "${SSH_PORT:-22}" \
@@ -44,3 +46,4 @@ jobs:
             -o IdentitiesOnly=yes \
             "${PREPARING_HOST_NAME}@${SERVER_DOMAIN_NAME}" \
             "/opt/github_k3s_runners/update_repo_url.sh '${{ github.server_url }}' '${{ github.repository }}'"
+          echo "DEBUG5"
